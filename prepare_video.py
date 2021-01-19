@@ -3,6 +3,7 @@ import cv2
 from PIL import Image, ImageEnhance
 import subprocess
 import os
+import glob
 import sys
 import shutil
 import argparse
@@ -155,15 +156,21 @@ def cleanup():
 
 # Função que realiza a restauração nas imagens
 def restore():
+    os.mkdir('./temp/temp/')
+    pngs = glob.glob("./temp/*.png")
+    for png in pngs:
+        shutil.move(png, './temp/temp/'+os.path.basename(png))
+    
     args = [
-        "python", "restore_images.py"
-        "--input_folder","./temp",
+        "python", "restore_images.py",
+        "--input_folder","./temp/temp",
         "--output_folder","./temp",
         "--GPU","0",
     ]
 
     try:
         p = subprocess.call(args)
+        shutil.rmtree('./temp/temp/')
     except:
         print("Falha ao realizar restauração.")
         sys.exit(1)
